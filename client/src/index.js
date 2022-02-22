@@ -9,11 +9,11 @@ import store from './store';
 //aca agrego el store de redux a react
 
 ReactDOM.render(
-  <Provider store={store}>
   <React.StrictMode>
-    <App />
-    </React.StrictMode>
-  </Provider>,
+  <Provider store={store}>
+    <App />    
+  </Provider>
+  </React.StrictMode>,
   document.getElementById('root')
 );
 

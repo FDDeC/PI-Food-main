@@ -17,56 +17,77 @@ function mapStateToProps(state) { //el componente va a estar al tanto del estado
   }
 }
 
+function validate(input) {
+    let errors = {};
+    let pattern = /[0-9]+/;
+    if (pattern.test(input.title)) {
+      errors.title = 'Titulo invalido, no acepta números';
+    } 
+    return errors;
+  };
+
   
 function FilterBar({ applyFilter, status, setStatus }) {
   
   const [filterGral, setFilter] = useState({
     title: '',
-
     vegetarian: false,
     vegan: false,
     glutenFree: false, 
-
-    ketogenic: false,    
-    lactoVegetarian: false,
-    ovoVegetarian: false,    
-    pescetarian: false,
-    paleo: false,
-    primal: false,
-    lowFODMAP: false,
-    whole30: false
   }); 
+
+  const [dietsCheck, setDietsCheck] = useState({
+    ketogenic: false,//solo para valor de checkbox    
+    lactoVegetarian: false,//solo para valor de checkbox 
+    ovoVegetarian: false,//solo para valor de checkbox 
+    pescetarian: false,//solo para valor de checkbox 
+    paleo: false,//solo para valor de checkbox 
+    primal: false,//solo para valor de checkbox 
+    lowFODMAP: false,//solo para valor de checkbox 
+    whole30: false,//solo para valor de checkbox     
+  })
+
   const [diets, setDiets] = useState([])
+  const [errors, setErrors] = useState('')
   
   const[typing, setTyping] = useState(false)
 
   useEffect(() => {
     let timeout = null;    
     if (typing) {      
-      console.log(filterGral,diets)
+      console.log(filterGral,diets,errors)
       timeout = setTimeout(() => {        
         setTyping(false)
-        setStatus(true)
-        applyFilter({op1:filterGral,op2:diets})
+        
+        if (!Object.keys(errors).length) {
+          setStatus(true)
+          applyFilter({op1:filterGral,op2:diets})
+        }
+        
       }, 1500);         
     }    
     return () => clearTimeout(timeout) 
-  }, [typing,setStatus,applyFilter,filterGral,diets])
+  }, [typing,setStatus,applyFilter,filterGral,diets,errors])
 
   const handleFilterChange = (e) => {
     setTyping(true)
+    console.log(e.target)
     setFilter({
       ...filterGral,
       [e.target.name]: e.target.name==='title' ? e.target.value : e.target.checked //aca agarro o el valor del evento.target o el checked dependiendo del nombre del e.target
     })       
     //refreshRecipes()     
-    // setErrors(validate({//le paso a la funcion validate el estado modificado
-    //   ...input,         
-    //   [e.target.name]: e.target.value 
-    // }));   
+    setErrors(validate({//le paso a la funcion validate el estado modificado
+      ...filterGral,         
+      [e.target.name]: e.target.name==='title' ? e.target.value : e.target.checked
+    }));   
   }
   const handleDiets = (e) => {
     setTyping(true)
+    setDietsCheck({
+      ...dietsCheck,
+      [e.target.name]: e.target.checked
+    })
     if (e.target.checked) {
       if (!diets.find(a => a === e.target.name)) {
         setDiets([...diets,e.target.name])
@@ -88,8 +109,7 @@ function FilterBar({ applyFilter, status, setStatus }) {
         name='title'
         value={ filterGral.title }
         placeholder="Receta..."        
-        onChange={e=> handleFilterChange(e)}
-        
+        onChange={e=> handleFilterChange(e)}        
         //onChange={e => refreshRecipes()}
       />
       <div className='checkboxs'>
@@ -98,70 +118,69 @@ function FilterBar({ applyFilter, status, setStatus }) {
           onChange={e=> handleFilterChange(e)}
           id="vegetarian"
           name="vegetarian"
-          value={filterGral.vegetarian}
-          
+          value={filterGral.vegetarian}          
         />
-        <label for="vegetarian">Vegetarian</label>
+        <label htmlFor="vegetarian">Vegetarian</label>
 
         <input type="checkbox" 
         onChange={e=> handleFilterChange(e)}
           id="vegan" name="vegan" value={filterGral.vegan}
         />
-        <label for="vegan">Vegan</label>
+        <label htmlFor="vegan">Vegan</label>
 
         <input type="checkbox" 
         onChange={e=> handleFilterChange(e)}
           id="glutenFree" name="glutenFree" value={filterGral.glutenFree}
         />
-        <label for="glutenFree">Gluten-free</label>
+        <label htmlFor="glutenFree">Gluten-free</label>
 
         <input type="checkbox" 
-          onChange={e => { handleFilterChange(e); handleDiets(e) }}
-          id="ketogenic" name="ketogenic" value={filterGral.ketogenic}
+          onChange={e => { handleDiets(e) }}
+          id="ketogenic" name="ketogenic" value={dietsCheck.ketogenic}
         />
-        <label for="ketogenic">Ketogenic</label>
-
-        <input type="checkbox" 
-        onChange={e=>{ handleFilterChange(e); handleDiets(e) }}
-          id="lactoVegetarian" name="lactoVegetarian" value={filterGral.lactoVegetarian}
-        />
-        <label for="lactoVegetarian">Lacto-vegetarian</label>
-
-        <input type="checkbox" 
-        onChange={e=> { handleFilterChange(e); handleDiets(e) }}
-          id="ovoVegetarian" name="ovoVegetarian" value={filterGral.ovoVegetarian}
-        />
-        <label for="ovoVegetarian">Ovo-vegetarian</label>
+        <label htmlFor="ketogenic">Ketogenic</label>
 
         <input type="checkbox" 
         onChange={e=>{ handleFilterChange(e); handleDiets(e) }}
-          id="pescetarian" name="pescetarian" value={filterGral.pescetarian}
+          id="lactoVegetarian" name="lactoVegetarian" value={dietsCheck.lactoVegetarian}
         />
-        <label for="pescetarian">Pescetarian</label>
+        <label htmlFor="lactoVegetarian">Lacto-vegetarian</label>
 
         <input type="checkbox" 
         onChange={e=> { handleFilterChange(e); handleDiets(e) }}
-          id="paleo" name="paleo" value={filterGral.paleo}
+          id="ovoVegetarian" name="ovoVegetarian" value={dietsCheck.ovoVegetarian}
         />
-        <label for="paleo">Paleo</label>
+        <label htmlFor="ovoVegetarian">Ovo-vegetarian</label>
+
+        <input type="checkbox" 
+        onChange={e=>{ handleFilterChange(e); handleDiets(e) }}
+          id="pescetarian" name="pescetarian" value={dietsCheck.pescetarian}
+        />
+        <label htmlFor="pescetarian">Pescetarian</label>
 
         <input type="checkbox" 
         onChange={e=> { handleFilterChange(e); handleDiets(e) }}
-          id="primal" name="primal" value={filterGral.primal}
+          id="paleo" name="paleo" value={dietsCheck.paleo}
         />
-        <label for="primal">Primal</label>
+        <label htmlFor="paleo">Paleo</label>
 
         <input type="checkbox" 
         onChange={e=> { handleFilterChange(e); handleDiets(e) }}
-          id="lowFODMAP" name="lowFODMAP" value={filterGral.lowFODMAP}
+          id="primal" name="primal" value={dietsCheck.primal}
         />
-        <label for="lowFODMAP">LowFODMAP</label>
+        <label htmlFor="primal">Primal</label>
 
         <input type="checkbox" 
         onChange={e=> { handleFilterChange(e); handleDiets(e) }}
-          id="whole30" name="whole30" value={filterGral.whole30}
+          id="lowFODMAP" name="lowFODMAP" value={dietsCheck.lowFODMAP}
         />
-        <label for="whole30">LowFODMAP</label>
+        <label htmlFor="lowFODMAP">LowFODMAP</label>
+
+        <input type="checkbox" 
+        onChange={e=> { handleFilterChange(e); handleDiets(e) }}
+          id="whole30" name="whole30" value={dietsCheck.whole30}
+        />
+        <label htmlFor="whole30">whole30</label>
 </div>
       
     </div>

@@ -6,7 +6,7 @@ async function getWanRecipes() {
     try {
         if (!WanRecipes.length) {
             console.log('CONSULTO SERVER WAN')
-            const consulta = await fetch(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&addRecipeInformation=true`)
+            const consulta = await fetch(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&addRecipeInformation=true&number=100`)
             const result = await consulta.json()
             WanRecipes = result.results
             return result.results
@@ -83,10 +83,11 @@ export function getRecipes(filter) {
         try {
             const wanR = await getWanRecipes()
             const lanR = await getLanRecipes()
-            console.log('asdasdasdasd', wanR, lanR)
+            //console.log('asdasdasdasd', wanR, lanR)
             const allR = [...wanR, ...lanR] //aca meto todo lo que me trae el wan y el lan, luego aplico filtro
-            const filterR = await filtrar(allR,filter)
-            console.log('luego del filtrado ->',filterR)//muestro lo filtrado en consola
+            console.log(allR)
+            //const filterR = await filtrar(allR,filter)
+            //console.log('luego del filtrado ->',filterR)//muestro lo filtrado en consola
             dispatch({ type: 'SET_FILTERING_STATUS', payload: false })
             return dispatch({ type: "FILTERED_RECIPES", payload: wanR });
         } catch (error) {
