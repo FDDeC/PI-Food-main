@@ -1,33 +1,39 @@
 import './App.css';
-import FilterPage from './components/pages/FilterPage';
-import RecipeForm from './components/forms/RecipeForm';
+import HomePage from './components/pages/HomePage';
 import Landing from './components/pages/LandingPage';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import RecipeDetail from './components/recipes/RecipeDetail';
+import { Switch, Route } from "react-router-dom";
+import NewRecipe from './components/pages/NewRecipe';
+  
 function App() {
-  return (
-    <div className="App">
-      
-      <BrowserRouter>
-      <Routes>
+  return (   
+    <div className="App">      
+      <Switch>
       <Route
         exact
-        path='/'
-        element={<Landing />}        
+          path='/'
+          component={Landing}             
           />
       <Route
         exact
         path='/home'
-        element={<FilterPage />}        
+        component={HomePage}        
       />
       <Route
         exact
         path='/new'
-        element={<RecipeForm />} 
-        />
-        </Routes>  
-        </BrowserRouter>
+        component={NewRecipe} 
+          />
+      <Route
+        exact
+        path='/recipe/:recipeId'
+        component={RecipeDetail}
+      />      
+        </Switch>          
     </div>
+    
   );
 }
 
 export default App;
+

@@ -1,21 +1,22 @@
 body {
-  margin: 0;
+  margin-left: 30px;
+  margin-right: 30px;
   display: flex;
-  min-height: 100vh;
   justify-content: center;
+
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: linear-gradient(
-      rgba(255, 255, 255, 0.5),
-      rgba(255, 255, 255, 0.5)
+      rgba(255, 255, 255, 0.75),
+      rgba(255, 255, 255, 0.75)
     ),
     url("cooking.png");
   background-repeat: no-repeat;
   background-size: cover;
-  background-position-y: 60px;
+  background-position-y: 100px;
 }
 
 code {

@@ -1,0 +1,91 @@
+.addRecipeBar {
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  gap: 5px;
+}
+.TitleAndError {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 96%;
+  font-size: medium;
+}
+.TitleAndError input {
+  display: flex;
+  width: 50%;
+  font-size: medium;
+}
+.TitleAndError button {
+  display: flex;
+  justify-self: end;
+}
+
+.TitleAndError h4 {
+  margin: 0px;
+}
+.summary {
+  display: flex;
+  width: 96%;
+}
+.summary textarea {
+  display: flex;
+  flex-grow: 1;
+  font-size: medium;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+.scores {
+  display: flex;
+  justify-content: space-between;
+  width: 96%;
+}
+.scores .scoreDiv {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  font-weight: bold;
+  font-size: medium;
+}
+.scores .scoreDiv input {
+  font-size: medium;
+  width: 50px;
+}
+.scores button {
+  font-size: medium;
+}
+.addStep {
+  display: flex;
+  justify-content: space-between;
+  width: 96%;
+}
+.addStep input {
+  font-size: medium;
+  width: 85%;
+}
+.addStep button {
+  font-size: medium;
+  background-color: rgb(127, 255, 138);
+}
+.steps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.step {
+  display: flex;
+  justify-content: space-between;
+  font-size: medium;
+  width: 96%;
+}
+.step label {
+  font-size: medium;
+  font-weight: bold;
+}
+.step button {
+  font-size: medium;
+  background-color: rgb(245, 87, 87);
+}

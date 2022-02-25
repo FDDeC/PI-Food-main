@@ -2,13 +2,13 @@ import React from "react";
 import FilterBar from "../forms/FilterBar";
 import Recipes from "../recipes/Recipes";
 
-export default function FilterPage(){
+export default function HomePage(){
     return (
         <>
-            <div className='navbar'>
+            <div className='navBar'>
                 <FilterBar/>
             </div>
-            <div className='recipes'>
+            <div className='content'>
                 <Recipes/>
             </div>
         </>

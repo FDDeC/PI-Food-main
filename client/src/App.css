@@ -1,5 +1,11 @@
 .App {
-  text-align: center;
+  display: flex;
+  box-sizing: border-box;
+  width: 1000px;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 
 .App-logo {
@@ -37,14 +43,22 @@
   }
 }
 
-.navbar {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+.navBar {
+  box-sizing: border-box;
+  width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: rgb(223, 219, 219);
 }
-
 .content {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.buttonLink {
+  font-size: medium;
 }
