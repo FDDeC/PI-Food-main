@@ -7,7 +7,8 @@ module.exports = (sequelize) => {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV1,
-      primaryKey: true
+      primaryKey: true,
+      allowNull: false
     },
     title: {
       type: DataTypes.STRING,
@@ -26,8 +27,8 @@ module.exports = (sequelize) => {
       default:0
     },
     analyzedInstructions: {
-      type: DataTypes.ARRAY(DataTypes.JSONTYPE),
-      default:[]
+      type:DataTypes.STRING,      
+      default:''
     }
   });
 };

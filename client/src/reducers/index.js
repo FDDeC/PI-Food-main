@@ -2,9 +2,8 @@ const initialState = {
     recipeAll: [],
     filterResult: [],
     recipeDetail: { },
-    filtering: false,
-    actualPage:0,
-    actualPageContent:[]    
+    filtering: false,    
+    dietTypes: []
   };
 
 function rootReducer(state = initialState, action) {
@@ -57,6 +56,16 @@ function rootReducer(state = initialState, action) {
             ...state,
             filterResult: action.payload.recipes            
         }
+    }
+
+    if (action.type === "SET_DIET_TYPES") {
+        if (!Object.keys(state.dietTypes).length && Object.keys(action.payload).length) {
+            console.log('seteando tipos de dietas')
+            return {
+                ...state,
+                dietTypes: action.payload
+            }
+        }    
     }
     
     if (action.type === "SET_FILTERING_STATUS") {

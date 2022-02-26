@@ -37,6 +37,12 @@
   font-size: medium;
   font-family: Verdana, Arial, Helvetica, sans-serif;
 }
+.diets {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 96%;
+}
 .scores {
   display: flex;
   justify-content: space-between;
@@ -75,6 +81,7 @@
   align-items: center;
   width: 100%;
 }
+
 .step {
   display: flex;
   justify-content: space-between;

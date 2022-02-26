@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-
+import { connect } from "react-redux";
+import { getDiets } from '../../actions'
 import './RecipeForm.css'
 // Nombre
 // Resumen del plato
@@ -7,7 +8,32 @@ import './RecipeForm.css'
 // Nivel de "comida saludable"
 // Paso a paso
 
-function RecipeForm() {
+function mapDispatchToProps(dispatch) { //le doy al componente la capacidad de manejar el estado de redux
+  return {
+    obtainDiets: () => dispatch(getDiets()),// para solicitar tipos de dietas
+  };
+}
+
+function mapStateToProps(state) { //el componente va a estar al tanto del estado de la variable "filtering" del estado de redux
+  return {
+    stateDiets: state.dietTypes
+  }
+}
+
+async function sendRecipe(data) {    
+  console.log('sendRecipe', data)//aca enviar datos al backend
+  const result = await fetch('http://localhost:3001/recipe', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  return result.json()
+}
+
+function RecipeForm({ stateDiets , obtainDiets }) {
 
   const [text, setText] = useState({
     title: '',//titulo
@@ -26,23 +52,95 @@ function RecipeForm() {
     spoonacularScore: 50.5,//puntuacion
     healthScore: 50.5,//nivel saludable
   })    
+
+  const [dietsCheck, setDietsCheck] = useState({//solo para valor de checkbox     
+    vegetarian: false,//vegetarian
+    vegan: false,//vegan
+    glutenfree: false,//Gluten Free
+    ketogenic: false,//ketogenic    
+    lactovegetarian: false,//lacto vegetarian 
+    ovovegetarian: false,//ovo vegetarian     
+    pescetarian: false,//pescetarian 
+    paleolithic: false,//paleolithic 
+    primal: false,//primal 
+    lowfodmap: false,//low fodmap 
+    whole30: false,//whole 30   
+   })
   
+  const [diets, setDiets] = useState([])
+
   const [errors, setErrors] = useState('');
 
-  useEffect(() => {
-    validate(text)
+  useEffect(() => {    
+    if (stateDiets.length===0) {
+      obtainDiets()
+    }      
+    return () => {}
+  }, [text,step,scores,stateDiets,obtainDiets])
+
+  async function addRecipe() {
     const newRecipe = {
       title: text.title,
-      summary: text.summary,      
+      summary: text.summary,
       spoonacularScore: scores.spoonacularScore,
-      healthScore: scores.healthScore,   
-      analyzedInstructions: text.analyzedInstructions
+      healthScore: scores.healthScore,
+      analyzedInstructions: JSON.stringify([text.analyzedInstructions]),
+      diets: diets
+    }    
+    const sendResult = await sendRecipe(newRecipe)
+    console.log('sendResult',sendResult)
+    if (sendResult.done && sendResult.done===true) {
+      setStep({//pongo en 0 el step para proximo paso
+      number: undefined,
+      step: '',
+      ingredients: [],
+      equipment: []
+      })
+      setDietsCheck({
+        vegetarian: false,//vegetarian
+        vegan: false,//vegan
+        glutenfree: false,//Gluten Free
+        ketogenic: false,//ketogenic    
+        lactovegetarian: false,//lacto vegetarian 
+        ovovegetarian: false,//ovo vegetarian     
+        pescetarian: false,//pescetarian 
+        paleolithic: false,//paleolithic 
+        primal: false,//primal 
+        lowfodmap: false,//low fodmap 
+        whole30: false,//whole 30
+      })      
+      setText({
+        title: '',//titulo
+        summary: '',//resumen
+        analyzedInstructions: { name: "", steps: [] }//paso a paso
+      })
+      setScores({
+        spoonacularScore: 50.5,//puntuacion
+        healthScore: 50.5,//nivel saludable
+      })
+    } else {
+      return alert('hay errores')
     }
-    console.log(newRecipe)    
-    return () => {}
-  }, [text,step,scores])
+  }
+
+  const handleDiets = (e) => {  
+    let formatedkey = e.target.name.split(' ').join('')
+    setDietsCheck({
+      ...dietsCheck,
+      [formatedkey]: e.target.checked
+    })
+    if (e.target.checked) {
+      if (!diets.find(a => a === parseInt(e.target.value))) {
+        setDiets([...diets,parseInt(e.target.value)])
+      } 
+    } else {
+      const arr = diets.filter(a => a !== parseInt(e.target.value))
+      setDiets(arr)
+    }
+  }
 
   function validate(input) {
+    
     let errors = {};
     let pattern = /[0-9]+/;
     if (!input.title.length) {
@@ -134,7 +232,7 @@ function RecipeForm() {
           </h4>
         
         
-          <button disabled={ Object.keys(errors).length || !text.title.length || !text.summary.length} className='buttonLink'>
+        <button disabled={Object.keys(errors).length || !text.title.length || !text.summary.length} onClick={ () => addRecipe(text,scores) }className='buttonLink'>
               Añadir !
           </button>
         
@@ -150,10 +248,24 @@ function RecipeForm() {
           onChange={ e=> handleText(e) }
           />
       </div>
-      
+      <div className='diets'>
+        { stateDiets.map((value,index) => { return (
+          <div key={ index }>
+            <input               
+              type="checkbox"
+              onChange={e => handleDiets(e)}              
+              name={value.name}
+              value={value.id}
+              //value={ dietsCheck[value.name.split(' ').join('')] }
+            />
+            <label htmlFor={value.name}>{value.name}</label>
+          </div>
+        )})}
+      </div>
+            
       <div className='scores'>
         <div className='scoreDiv'>
-        <label for='scoreSp'>spoonacular Score</label>
+        <label htmlFor='scoreSp'>spoonacular Score</label>
           <input
           id="scoreSp"
           type="number"
@@ -165,7 +277,7 @@ function RecipeForm() {
           />
         </div>
         <div className='scoreDiv'>
-        <label for='scoreHt'>Healthy Score </label>
+        <label htmlFor='scoreHt'>Healthy Score </label>
           <input
           id="scoreHt"
           type="number"
@@ -194,7 +306,7 @@ function RecipeForm() {
       <div
         // hidden={text.analyzedInstructions.steps && !text.analyzedInstructions.steps.length}
         className='steps'>    
-        {text.analyzedInstructions.steps.map((value, index) => <div className='step'><label>Paso { index+1 }: { value.step }</label><button onClick={() => removeStep(index+1)}>Borrar paso!</button></div>)}  
+        {text.analyzedInstructions.steps.map((value, index) => <div key={ index } className='step'><label>Paso { index+1 }: { value.step }</label><button onClick={() => removeStep(index+1)}>Borrar paso!</button></div>)}  
         
       </div>
     </div>
@@ -202,4 +314,7 @@ function RecipeForm() {
   );      
 }
 
-export default RecipeForm
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RecipeForm)

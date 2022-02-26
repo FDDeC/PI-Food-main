@@ -48,15 +48,13 @@ function FilterBar({ applyFilter, status, result, setStatus }) {
     glutenfree: false,//Gluten Free
     ketogenic: false,//ketogenic    
     lactovegetarian: false,//lacto vegetarian 
-    ovovegetarian: false,//ovo vegetarian 
-    lactoovovegetarian: false,//lacto ovo vegetarian
+    ovovegetarian: false,//ovo vegetarian     
     pescetarian: false,//pescetarian 
     paleolithic: false,//paleolithic 
     primal: false,//primal 
     lowfodmap: false,//low fodmap 
     whole30: false,//whole 30   
-    dairyfree: false//dairy free
-  })
+   })
 
   const [diets, setDiets] = useState([])
   const [errors, setErrors] = useState('')
@@ -211,14 +209,7 @@ function FilterBar({ applyFilter, status, result, setStatus }) {
         />
         <label htmlFor="ovovegetarian">Ovo vegetarian</label>
         </div>
-        <div>
-        <input type="checkbox" 
-        onChange={e=> handleDiets(e) }
-          id="lactoovovegetarian" name="lacto ovo vegetarian" value={dietsCheck.lactoovovegetarian}
-        />
-        <label htmlFor="lactoovovegetarian">Lacto ovo vegetarian</label>
-        </div>
-        
+              
         <div>
         <input type="checkbox" 
         onChange={e=> handleDiets(e) }
@@ -253,14 +244,7 @@ function FilterBar({ applyFilter, status, result, setStatus }) {
           id="whole30" name="whole 30" value={dietsCheck.whole30}
         />
         <label htmlFor="whole30">Whole 30</label>
-        </div>
-        <div>
-        <input type="checkbox" 
-        onChange={e=> handleDiets(e) }
-          id="dairyfree" name="dairy free" value={dietsCheck.dairyfree}
-        />
-        <label htmlFor="dairyfree">Dairy free</label>
-        </div>
+        </div>       
         
       </div>
       </div>
