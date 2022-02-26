@@ -36,9 +36,10 @@ router.get('/types', async (req, res) => {
 })
 
 function sanitizeRecipe(recipeDb) {
-    recipeDb.diets = recipeDb.diets.map(d => d.name)
-    recipeDb.analyzedInstructions = JSON.parse(recipeDb.analyzedInstructions)
-    return recipeDb
+    var data = recipeDb.get({ plain: true })
+    data.diets = recipeDb.diets.map(d => d.name)
+    data.analyzedInstructions = JSON.parse(recipeDb.analyzedInstructions)
+    return data
 }
 
 router.get('/recipes/:id', async (req, res) => {
@@ -64,18 +65,20 @@ router.get('/recipes', async (req, res) => {
         if (name.legth) {//aca solicito recetas con nombres parecidos
             return res.status(200).send({done:true, data:name})
         } else {//aca solicito todas las recetas
-            const result = await Recipe.findAll({
+            Recipe.findAll({
             include: {
                     model: Diet,
                     attributes: ['name'],
                     through: { attributes: [] }
                 }            
-            }, { raw: true })            
-            if (result.length) {                 
-                return res.status(200).send({done:true, data:result[0].title})
-            } else {
-                return res.status(200).send({ done: true, data: [] })
-            }            
+            }, { raw: true }).then( data => data.map(e => sanitizeRecipe(e))).then(data=>res.status(200).send({ done:true, data:data }))        
+            // console.log(result)//const result2 = await Promise.all(result.map(e => sanitizeRecipe(e)))
+            // return res.status(200).send({ done:true, data:result })
+            // if (result.length) {                 
+                                
+            // } else {
+            //     return res.status(200).send({ done: true, data: [] })
+            // }            
         }        
     } catch (error) {
         return res.status(401).json({ done: false, data: `get('/recipes' ${error}` })
