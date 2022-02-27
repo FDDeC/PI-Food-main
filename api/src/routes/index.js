@@ -8,6 +8,51 @@ const dietsFromSpoon = ['gluten free', 'ketogenic', 'vegetarian', 'lacto vegetar
 // Configurar los routers
 // Ejemplo: router.use('/auth', authRouter);
 
+//aplico una funcion a cada valor del arreglo devuelto por la base de datos
+function refactorizarArray(arrdB,sanitizante) {
+    return new Promise(function (resolve, reject) {
+        var newArr = []
+        if (arrdB.length) {
+                arrdB.map((value, index) => {
+                newArr.push(sanitizante(value))                
+                if (index === arrdB.length - 1) {
+                    resolve(newArr)
+                }
+            })
+        } else {
+            resolve(newArr)
+        }        
+    })
+}
+
+//filtro las recetas por titulo
+function filterByTitle(arr,name) {
+    return new Promise(function (resolve, reject) {
+        var newArr = []
+        if (arr.length) {            
+            arr.map((value, index) => {
+                if (value.title.toLowerCase().includes(name.toLowerCase())) {
+                    newArr.push(value)       
+                }                                
+                if (index === arr.length - 1) {
+                    resolve(newArr)
+                }
+            })
+        } else {
+            resolve(arr)
+        }        
+    })
+}
+
+//modifica arreglo de receta
+function sanitizeRecipe(recipeDb) {
+    var data = recipeDb.get({ plain: true })
+    data.diets = recipeDb.diets.map(d => d.name)
+    data.analyzedInstructions = JSON.parse(recipeDb.analyzedInstructions)
+    return data
+}
+
+// cargo receta en base de datos y aplico relacion entre tablas
 router.post('/recipe', async (req, res) => {
     try {
         const newRecipe = await Recipe.create(req.body)
@@ -35,13 +80,6 @@ router.get('/types', async (req, res) => {
     }      
 })
 
-function sanitizeRecipe(recipeDb) {
-    var data = recipeDb.get({ plain: true })
-    data.diets = recipeDb.diets.map(d => d.name)
-    data.analyzedInstructions = JSON.parse(recipeDb.analyzedInstructions)
-    return data
-}
-
 router.get('/recipes/:id', async (req, res) => {
     try {                
         const id = req.params.id        
@@ -52,7 +90,7 @@ router.get('/recipes/:id', async (req, res) => {
                 through: { attributes: [] }
             }            
         },{ raw: true })        
-        return res.status(200).send({done:true, data:sanitizeRecipe(result)})
+        return res.status(200).json({done:true, data:sanitizeRecipe(result)})
     } catch (error) {
         return res.status(401).json({ done: false, data: `get('/recipes/:id' ${error}` })
     }
@@ -62,46 +100,23 @@ router.get('/recipes', async (req, res) => {
     try {
         const name = req.query.name || ''
         
-        if (name.legth) {//aca solicito recetas con nombres parecidos
-            return res.status(200).send({done:true, data:name})
-        } else {//aca solicito todas las recetas
-            Recipe.findAll({
+        const result = await Recipe.findAll({
             include: {
                     model: Diet,
                     attributes: ['name'],
                     through: { attributes: [] }
                 }            
-            }, { raw: true }).then( data => data.map(e => sanitizeRecipe(e))).then(data=>res.status(200).send({ done:true, data:data }))        
-            // console.log(result)//const result2 = await Promise.all(result.map(e => sanitizeRecipe(e)))
-            // return res.status(200).send({ done:true, data:result })
-            // if (result.length) {                 
-                                
-            // } else {
-            //     return res.status(200).send({ done: true, data: [] })
-            // }            
-        }        
-    } catch (error) {
+        }, { raw: true })
+
+        const result2 = await refactorizarArray(result, sanitizeRecipe)
+                
+        const recipes = await filterByTitle(result2,name)
+
+        return res.status(200).json({ done:true, data:recipes })                        
+                
+    } catch (error) {        
         return res.status(401).json({ done: false, data: `get('/recipes' ${error}` })
     }
 })
-
-async function getRecipeById(id) {
-    try {        
-        const result = await Recipe.findByPk(id, {
-        include: {
-                model: Diet,
-                attributes: ['name'],
-                through: { attributes: [] }
-            }            
-        })
-        const result2 = await result.get({ plain: true })
-        result2.diets = result2.diets.map(d => d.name)
-        result2.analyzedInstructions = JSON.parse(result2.analyzedInstructions)
-        return { done:true, data: result2 } 
-    } catch (error) {
-        return { done:false, data: `getRecipeById(id) ${error}` }
-    }
-}
-
 
 module.exports = router;

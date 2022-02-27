@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { getRecipes, setFilteringStatus } from '../../actions'
+import { getRecipes, setFilteringStatus, getDiets, setOrder } from '../../actions'
 import { Link } from 'react-router-dom'
 import { connect } from "react-redux";
 import './FilterBar.css'
@@ -8,14 +8,17 @@ import './FilterBar.css'
 function mapDispatchToProps(dispatch) { //le doy al componente la capacidad de manejar el estado de redux
   return {
     applyFilter: obj => dispatch(getRecipes(obj)),// le envio el filtro al action creator
-    setStatus: boolean => dispatch(setFilteringStatus(boolean))//setea en "FILTRANDO" al componente 
+    setStatus: boolean => dispatch(setFilteringStatus(boolean)),//setea en "FILTRANDO" al componente 
+    obtainDiets: () => dispatch(getDiets()),// para solicitar tipos de dietas
+    setOrder: obj => dispatch(setOrder(obj))
   };
 }
 
 function mapStateToProps(state) { //el componente va a estar al tanto del estado de la variable "filtering" del estado de redux
   return {
     status: state.filtering,
-    result: state.filterResult
+    result: state.filterResult,
+    dietTypes: state.dietTypes
   }
 }
 
@@ -29,7 +32,7 @@ function validate(input) {
   };
 
   
-function FilterBar({ applyFilter, status, result, setStatus }) {
+function FilterBar({ applyFilter, status, result, setStatus, dietTypes, obtainDiets, setOrder }) {
   
   const [filterGral, setFilter] = useState({
     title: '',
@@ -59,12 +62,17 @@ function FilterBar({ applyFilter, status, result, setStatus }) {
   const [diets, setDiets] = useState([])
   const [errors, setErrors] = useState('')
   
-  const[typing, setTyping] = useState(true)
+  const[typing, setTyping] = useState(false)
 
   useEffect(() => {
-    let timeout = null;    
-    if (typing) {      
-      console.log(filterGral,diets,errors)
+    let timeout = null;
+    if (!dietTypes.length) {
+      console.log('obtengo diets')
+      obtainDiets()
+    }
+    
+    if (typing || !result.length) {      
+      
       timeout = setTimeout(() => {        
         setTyping(false)
         
@@ -83,7 +91,7 @@ function FilterBar({ applyFilter, status, result, setStatus }) {
       }, 1500);         
     }    
     return () => clearTimeout(timeout) 
-  }, [typing,alphaOrder,scoreOrder,setStatus,applyFilter,filterGral,diets,dietsCheck,errors])
+  }, [typing,alphaOrder,scoreOrder,setStatus,applyFilter,filterGral,diets,dietsCheck,errors,dietTypes,obtainDiets,result])
 
   const handleFilterChange = (e) => {
     setTyping(true)
@@ -115,16 +123,22 @@ function FilterBar({ applyFilter, status, result, setStatus }) {
     }
   }
   function changeAlpha() {
-    if (filterGral.title.length || result.length) {
-      setTyping(true)
+    
+    if (filterGral.title.length || result.length) { 
+      const newAlpha = alphaOrder === 'az' ? 'za' : 'az'
+      alphaOrder==='az' ? setAlphaOrder('za') : setAlphaOrder('az')
+      setOrder({orderAlpha:newAlpha, orderScore:scoreOrder})
     }
-    alphaOrder==='az' ? setAlphaOrder('za') : setAlphaOrder('az')
+    
   }
   function changeScore() {
+    
     if (filterGral.title.length || result.length) {
-      setTyping(true)
+      const newScore = scoreOrder === 'dsc' ? 'asc': 'dsc'
+      scoreOrder === 'dsc' ? setScoreOrder('asc') : setScoreOrder('dsc')       
+      setOrder({orderAlpha:alphaOrder, orderScore:newScore})
     }
-    scoreOrder==='dsc' ? setScoreOrder('asc') : setScoreOrder('dsc')
+    
   }
 
   return (
@@ -143,9 +157,9 @@ function FilterBar({ applyFilter, status, result, setStatus }) {
           />
           </div>
           
-          <button onClick={() => changeAlpha()}>{alphaOrder === 'az' ? 'Orden A-Z' : 'Orden Z-A'}</button>
+          <button onClick={() => changeAlpha()}>{alphaOrder === 'az' ? 'Ordenar Z-A' : 'Ordenar A-Z'}</button>
           
-          <button onClick={() => changeScore()}>{scoreOrder === 'asc' ? 'Peores primero' : 'Mejores primero'}</button>
+          <button onClick={() => changeScore()}>{scoreOrder === 'asc' ? 'Mejores primero' : 'Peores primero' }</button>
           
         </div>
         
@@ -164,7 +178,19 @@ function FilterBar({ applyFilter, status, result, setStatus }) {
 
       <div
         className='filters'>
-        <div>
+        { dietTypes.map((value,index) => { return (
+          <div key={ index }>
+            <input               
+              type="checkbox"
+              onChange={e => handleDiets(e)}              
+              name={value.name}
+              value={value.id}
+              checked={dietsCheck[value.name.split(' ').join('')]}              
+            />
+            <label htmlFor={value.name}>{value.name}</label>
+          </div>
+        )})}
+        {/* <div>
         <input
           type="checkbox" 
           onChange={e=> handleDiets(e)}
@@ -244,7 +270,7 @@ function FilterBar({ applyFilter, status, result, setStatus }) {
           id="whole30" name="whole 30" value={dietsCheck.whole30}
         />
         <label htmlFor="whole30">Whole 30</label>
-        </div>       
+        </div>        */}
         
       </div>
       </div>

@@ -256,7 +256,7 @@ function RecipeForm({ stateDiets , obtainDiets }) {
               onChange={e => handleDiets(e)}              
               name={value.name}
               value={value.id}
-              //value={ dietsCheck[value.name.split(' ').join('')] }
+              checked={dietsCheck[value.name.split(' ').join('')]}  
             />
             <label htmlFor={value.name}>{value.name}</label>
           </div>

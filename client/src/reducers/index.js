@@ -15,8 +15,45 @@ function rootReducer(state = initialState, action) {
             recipeAll: [action.payload]
         }
     }
+
+    if (action.type === "ORDER_RECIPES") {
+        console.log("ORDERING RECIPES PAYLOAD->", action.payload)
+        var orderedRecipes = [...state.filterResult]
+        if (action.payload.orderAlpha === 'az') {//aplico orden A->Z
+            orderedRecipes.sort(function(a, b) {
+                if (a.title.toLowerCase() > b.title.toLowerCase()) return 1;
+                if (a.title.toLowerCase() < b.title.toLowerCase()) return -1;
+                return 0;
+            })
+        } else {
+            orderedRecipes.sort(function(a, b) {
+                if (a.title.toLowerCase() < b.title.toLowerCase()) return 1;
+                if (a.title.toLowerCase() > b.title.toLowerCase()) return -1;
+                return 0;
+            })
+        } 
+        if (action.payload.orderScore === 'asc') {//aplico orden A->Z
+            orderedRecipes.sort(function (a, b) {
+                if (a.spoonacularScore > b.spoonacularScore) return 1;
+                if (a.spoonacularScore < b.spoonacularScore) return -1;
+                return 0;
+            })
+        } else {
+            orderedRecipes.sort(function (a, b) {
+                if (a.spoonacularScore < b.spoonacularScore) return 1;
+                if (a.spoonacularScore > b.spoonacularScore) return -1;
+                return 0;
+            })
+        }    
+        return {
+            ...state,
+            filterResult: orderedRecipes            
+        }
+    }
+
+
     if (action.type === "SET_RECIPES_AND_FILTER") {
-        console.log("SET_RECIPES_AND_FILTER")
+        console.log("SET_RECIPES_AND_FILTER PAYLOAD->",action.payload)
         if (action.payload.filter.title.length) {//aplico filtro de título
             action.payload.recipes = action.payload.recipes.filter(r => r.title.toLowerCase().includes(action.payload.filter.title.toLowerCase()))
         }

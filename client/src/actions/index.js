@@ -18922,12 +18922,12 @@ async function getWanRecipes() {
     
 }
 
-async function getLanRecipes() {
+async function getLanRecipes(title) {
     console.log('CONSULTO SERVER LAN')
     try {
-        const consulta = await fetch(`http://localhost:3001/recipes`)
-        const result = await consulta.json()
-        return result        
+        const consulta = await fetch(`http://localhost:3001/recipes?name=${title}`)
+        const result = await consulta.json()       
+        return result.data        
     } catch (error) {
         //throw new Error(`error en getLanRecipes, ${error}`)
         console.log(`error en /actions getLanRecipes, ${error}`)
@@ -18951,6 +18951,12 @@ export function getDiets() {
         const dietTypes = await getDietTypes()
         console.log('dietTypessssssss',dietTypes)
         dispatch({ type: 'SET_DIET_TYPES', payload: dietTypes })              
+    }
+}
+
+export function setOrder(order) {
+    return async function (dispatch) {
+        dispatch({ type: 'ORDER_RECIPES', payload: order })              
     }
 }
 
@@ -18985,7 +18991,7 @@ export function getRecipes(filter) {
     return async function (dispatch) {
         try {
             const wanR = await getWanRecipes()
-            const lanR = await getLanRecipes()
+            const lanR = await getLanRecipes(filter.title)
             //console.log('asdasdasdasd', wanR, lanR)
             const allR = [...wanR, ...lanR] //aca meto todo lo que me trae el wan y el lan, luego aplico filtro            
             dispatch({ type: 'SET_FILTERING_STATUS', payload: false })

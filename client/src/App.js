@@ -1,7 +1,7 @@
 import './App.css';
 import HomePage from './components/pages/HomePage';
 import Landing from './components/pages/LandingPage';
-import RecipeDetail from './components/recipes/RecipeDetail';
+import RecipeDetail from './components/pages/RecipeDetail';
 import { Switch, Route } from "react-router-dom";
 import NewRecipe from './components/pages/NewRecipe';
   

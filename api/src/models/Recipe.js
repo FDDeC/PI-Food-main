@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     summary: {
@@ -27,7 +27,7 @@ module.exports = (sequelize) => {
       default:0
     },
     analyzedInstructions: {
-      type:DataTypes.STRING,      
+      type:DataTypes.TEXT,      
       default:''
     }
   });
