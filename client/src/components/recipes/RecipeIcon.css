@@ -9,8 +9,10 @@
   border: solid #414558 2px;
 }
 .recipeIcon-title {
-  margin-bottom: 15px;
+  margin-top: 15px;
   font-size: medium;
+  font-weight: bold;
+  text-align: center;
 }
 
 .recipeIcon-extraDiets ul {
@@ -20,9 +22,11 @@
   align-content: center;
   flex-wrap: wrap;
   max-height: 100px;
+  margin-left: 0px;
+  padding-left: 0px;
 }
 .recipeIcon-extraDiets ul li {
-  font-weight: bold;
+  font-weight: 600;
 }
 .detailLink {
   font-size: medium;

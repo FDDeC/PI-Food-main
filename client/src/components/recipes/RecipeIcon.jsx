@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from 'react-router-dom'
 import './RecipeIcon.css';
+import img from '../../cooking-small.png'
 
 function RecipeIcon({recipe}) {
     return (
@@ -10,12 +11,12 @@ function RecipeIcon({recipe}) {
                     rgba(255, 255, 255, 0.75),
                     rgba(255, 255, 255, 0.75)
                     )
-                    , url(${(recipe.image && recipe.image) || ""})`,
+                    , url(${(recipe.image && recipe.image) || img})`,
                 backgroundRepeat: `no-repeat`,
                 backgroundSize: `cover`
             }}>
                 
-            <h5 className="recipeIcon-title">{recipe.title}</h5>
+            <div className="recipeIcon-title">{recipe.title}</div>
             
             <div className="recipeIcon-extraDiets">
                 <ul>

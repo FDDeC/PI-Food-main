@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { connect } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
 import './RecipeDetail.css'
-
+import img from '../../cooking-small.png'
 
 function mapDispatchToProps(dispatch) { //le doy al componente la capacidad de manejar el estado de redux
   return {
@@ -72,14 +72,14 @@ function RecipeDetail({ filteredRecipes }) {
                     rgba(255, 255, 255, 0.75),
                     rgba(255, 255, 255, 0.75)
                     )
-                    , url(${(recipe.image && recipe.image) || ""})`,
+                    , url(${(recipe.image && recipe.image) || img})`,
                 backgroundRepeat: `no-repeat`,
                 backgroundSize: `cover`
                     }}>
                     <div className='recipeDetail-top'>
 
                         <div className="recipeDetail-img">
-                        <img className="recipeImg" src={recipe.image} alt='' />
+                        <img className="recipeImg" src={recipe.image || img} alt=''/>
                         </div>
                         <div className="recipeDetail-details"
                         >
