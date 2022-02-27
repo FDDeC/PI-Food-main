@@ -5,16 +5,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import  { Provider } from 'react-redux';
 import store from './store';
-import {HashRouter} from 'react-router-dom'
+import { BrowserRouter} from 'react-router-dom'
 
 //aca agrego el store de redux a react
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-    <HashRouter>
-        <App />
-    </HashRouter>
+      <BrowserRouter>    
+        <App />    
+      </BrowserRouter>
   </Provider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import { getDiets } from '../../actions'
 import './RecipeForm.css'
+
 // Nombre
 // Resumen del plato
 // Puntuación
@@ -20,17 +21,24 @@ function mapStateToProps(state) { //el componente va a estar al tanto del estado
   }
 }
 
-async function sendRecipe(data) {    
-  console.log('sendRecipe', data)//aca enviar datos al backend
-  const result = await fetch('http://localhost:3001/recipe', {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  });
-  return result.json()
+async function sendRecipe(data) { 
+  try {
+    
+    const result = await fetch('http://localhost:3001/recipe', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    return result.json()
+    
+  } catch (error) {
+    console.log(`error en sendRecipe() ${error}`)
+  }
+  
 }
 
 function RecipeForm({ stateDiets , obtainDiets }) {
@@ -79,7 +87,8 @@ function RecipeForm({ stateDiets , obtainDiets }) {
   }, [text,step,scores,stateDiets,obtainDiets])
 
   async function addRecipe() {
-    const newRecipe = {
+    try {
+      const newRecipe = {
       title: text.title,
       summary: text.summary,
       spoonacularScore: scores.spoonacularScore,
@@ -119,8 +128,11 @@ function RecipeForm({ stateDiets , obtainDiets }) {
         healthScore: 50.5,//nivel saludable
       })
     } else {
-      return alert('hay errores')
-    }
+      return alert(`error en server: ${sendResult.data}`)
+    }      
+    } catch (error) {
+      console.log(`error en addRecipe() ${error}`)
+    }    
   }
 
   const handleDiets = (e) => {  
@@ -176,11 +188,11 @@ function RecipeForm({ stateDiets , obtainDiets }) {
 
   const addStep = (value) => {    
     value.number = text.analyzedInstructions.steps.length//obtengo el index para setearlo como number
-    const pre1 = [...text.analyzedInstructions.steps,value] //añado paso
-    const prestep = { name:'', steps:pre1 } //seteo el arreglo previamente modificado
+    const pre1 = [...text.analyzedInstructions.steps,value] //añado paso dentro de los pasos anteriores
+    const prestep = { name:'', steps:pre1 } //armo objeto nuevo con los nuevos pasos
     setText({
       ...text,
-      analyzedInstructions: prestep //seteo el objeto completo ya que solo se puede modificar le valor de una key pura
+      analyzedInstructions: prestep //seteo el objeto armado
     })    
     setStep({//pongo en 0 el step para proximo paso
       number: undefined,

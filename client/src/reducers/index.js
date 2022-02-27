@@ -1,7 +1,7 @@
 const initialState = {
     recipeAll: [],
     filterResult: [],
-    recipeDetail: { },
+    recipeDetail: { id:null },
     filtering: false,    
     dietTypes: []
   };
@@ -120,14 +120,13 @@ function rootReducer(state = initialState, action) {
         }
     }
 
-    if (action.type === "RECIPE_DETAIL") {
-        console.log(`seteando detalle de receta -> ${action.payload}`)
-        console.log('DETAILS 11111',state.filterResult)
+    if (action.type === "SET_RECIPE_DETAIL") {
+        console.log(`seteando detalle de receta -> ${action.payload}`)        
         // const details = state.filterResult.find(r => r.id === action.payload)
         // console.log('DETAILS',details)
         return {
             ...state,
-            recipeDetail: {id:action.payload} //action.payload
+            recipeDetail: action.payload //action.payload
         };
     }
     

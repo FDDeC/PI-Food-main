@@ -18946,6 +18946,17 @@ async function getDietTypes() {
     }    
 }
 
+async function getLanId(id) {
+    try {
+        const consulta = await fetch(`http://localhost:3001/recipes/${id}`)
+        const result = await consulta.json()
+        return result
+    } catch (error) {
+        console.log(`error en /actions getDietTypes, ${error}`)
+        return { done:false ,data: { id: null } }
+    }
+}
+
 export function getDiets() {
     return async function (dispatch) {
         const dietTypes = await getDietTypes()
@@ -18981,19 +18992,13 @@ export function setOrder(order) {
 
 
 export function getRecipes(filter) {
-    //fetch(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}`)
-        //busco recetas y filtro.
-        //1º me fijo si el arreglo de recetas traido del endpoint esta vacio, en caso que se encuentre vacio solicito todas las recetas del endpoint.
-            //1.1 formateo los datos de la manera que me sirvan.
-        //2º busco recetas en la base de datos y cargo el arreglo de recetas de base de datos por mas que esté vasio o no.
-            //2.1 formateo los datos de manera que me sirvan
-        //3º aplico el filtro a ambos arreglos y el resultado se lo mando al reducer para que lo cargue en el arreglo filtrado
+    
     return async function (dispatch) {
         try {
             const wanR = await getWanRecipes()
             const lanR = await getLanRecipes(filter.title)
             //console.log('asdasdasdasd', wanR, lanR)
-            const allR = [...wanR, ...lanR] //aca meto todo lo que me trae el wan y el lan, luego aplico filtro            
+            const allR = [...lanR,...wanR] //aca meto todo lo que me trae el wan y el lan, luego aplico filtro            
             dispatch({ type: 'SET_FILTERING_STATUS', payload: false })
             
             const payloadWfilter = { recipes: allR, filter:filter }
@@ -19002,24 +19007,6 @@ export function getRecipes(filter) {
             console.log(error) 
             return dispatch({ type:'ERROR', payload: error})
         }
-        
-        // if (!WanRecipes.length) {
-        //     console.log('CONSULTO SERVER WAN')
-        //     fetch(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&addRecipeInformation=true`)
-        //         .then(response => response.json())
-        //         .then(json => {
-        //             WanRecipes = json.results    
-        //             return dispatch({ type: "FILTERED_RECIPES", payload: WanRecipes });
-        //         })
-        // } else {
-        //     console.log('NO HACE FALTA CONSULTAR SERVER WAN')   
-        //     const filtradas = await filtrar()
-        //     console.log(filtradas)
-        //     return dispatch({ type: "FILTERED_RECIPES", payload: WanRecipes });
-        // } 
-        //https://api.spoonacular.com/recipes/716426/information?apiKey=1935ed9ce94545f687a1880a21ce1f74
-        //https://api.spoonacular.com/recipes/complexSearch?diet=Vegetarian,Vegan&apiKey=1935ed9ce94545f687a1880a21ce1f74
-    
 };
 }
 
@@ -19042,14 +19029,23 @@ export function setRecipeDetail(id) {
     }
 }
 
-export function getRecipeDetail(id) {
-    return function (dispatch) {
-    //https://api.spoonacular.com/recipes/324694/analyzedInstructions?apiKey=1935ed9ce94545f687a1880a21ce1f74
-    return fetch(`https://api.spoonacular.com/recipes/${id}/analyzedInstructions?apiKey=${process.env.REACT_APP_API_KEY2}`)
-    .then(response => response.json())
-    .then(json => {
-        dispatch({ type: "GET_MOVIE_DETAIL", payload: json });
-    });
-};
+export function getRecipeDetail(id) {    
+    return async function (dispatch) {        
+        try {
+            const num = Number(id);
+            if (Number.isInteger(num)) {
+                return fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${process.env.REACT_APP_API_KEY2}`)
+                    .then(response => response.json())
+                    .then(json => {
+                        dispatch({ type: "SET_RECIPE_DETAIL", payload: json });
+                });
+            } else {
+                const details = await getLanId(id)
+                return dispatch({ type: "SET_RECIPE_DETAIL", payload: details.data });                                     
+            }            
+        } catch (error) {
+            console.log(error)
+        }    
+    };
 }
   
