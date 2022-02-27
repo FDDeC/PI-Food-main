@@ -112,7 +112,7 @@ function RecipeDetail({ filteredRecipes }) {
                         </div>
                     </div>
                     <div className='recipeDetail-bottom'>
-                        
+
                         <div className='recipeDetail-scores'>
                             <div>Score: { recipe.spoonacularScore }</div>
                             <div>Healthly: { recipe.healthScore }</div>
@@ -138,12 +138,12 @@ function RecipeDetail({ filteredRecipes }) {
                                 {steps.length > 1 ? <p>{ recipe.analyzedInstructions[0].steps[step].step }</p> : <></>} 
                             </div>
                         </div>
-                         <Link to='../home'><button>Volver</button></Link>
+                         <Link className='backButton' to='../home'><button>Volver</button></Link>
                     </div>                    
                 </div >    
             )
         } else {      
-            return <><Link to='../home'><p>Volver</p></Link></>//<Redirect to='../home' />
+            return <Link className='backButton' to='../home'><p>Volver</p></Link>//<Redirect to='../home' />
         }
     } else {
         return <Redirect to='../home' />
