@@ -82,22 +82,33 @@ function RecipeForm({ stateDiets , obtainDiets }) {
   useEffect(() => {    
     if (stateDiets.length===0) {
       obtainDiets()
-    }      
+    }     
+    if (scores.spoonacularScore > 100) {
+      setScores({
+        ...scores,
+        spoonacularScore:100
+      })
+    }
+    if (scores.healthScore > 100) {
+      setScores({
+        ...scores,
+        healthScore:100
+      })
+    }
     return () => {}
   }, [text,step,scores,stateDiets,obtainDiets])
 
   async function addRecipe() {
     try {
-      const newRecipe = {
-      title: text.title,
-      summary: text.summary,
-      spoonacularScore: scores.spoonacularScore,
-      healthScore: scores.healthScore,
-      analyzedInstructions: JSON.stringify([text.analyzedInstructions]),
-      diets: diets
-    }    
-    const sendResult = await sendRecipe(newRecipe)
-    console.log('sendResult',sendResult)
+        const newRecipe = {
+        title: text.title,
+        summary: text.summary,
+        spoonacularScore: scores.spoonacularScore,
+        healthScore: scores.healthScore,
+        analyzedInstructions: JSON.stringify([text.analyzedInstructions]),
+        diets: diets
+      }    
+    const sendResult = await sendRecipe(newRecipe)    
     if (sendResult.done && sendResult.done===true) {
       setStep({//pongo en 0 el step para proximo paso
       number: undefined,
@@ -155,15 +166,20 @@ function RecipeForm({ stateDiets , obtainDiets }) {
     
     let errors = {};
     let pattern = /[0-9]+/;
+    let pattern2 = /<[^>]+>/;
     if (!input.title.length) {
       errors.title = 'Título es requerido';
     } else if (pattern.test(input.title)) {
-      errors.title = 'Titulo invalido, no acepta números';
-    }  
+      errors.title = 'Titulo inválido, no acepta números';
+    } else if (pattern2.test(input.title)) {
+      errors.title = 'Titulo inválido, no acepta <></>';
+    }
     if (!input.summary.length) {
       errors.summary = 'Resumen es requerido';
     } else if (pattern.test(input.summary)) {
-      errors.summary = 'Resumen invalido, no acepta números';
+      errors.summary = 'Resumen inválido, no acepta números';
+    } else if (pattern2.test(input.summary)) {
+      errors.summary = 'Resumen inválido, no acepta <></>';
     } 
     return errors;
   };
@@ -182,7 +198,7 @@ function RecipeForm({ stateDiets , obtainDiets }) {
   const handleStep = (e) => {
     setStep({
       ...step,
-      step : e.target.value
+      step : e.target.value.replace(/<[^>]+>/g, '')
     })
   }
 
@@ -236,7 +252,10 @@ function RecipeForm({ stateDiets , obtainDiets }) {
           onChange={ e=> handleText(e) }
           />
                   
-          <h4>
+        <h4 
+          style={
+            Object.keys(errors).length ? { color: 'rgb(205, 50, 50)' } : { color:'limegreen'}
+        }>
           {Object.keys(errors).length
             ? Object.keys(errors).map(v => errors[v]+', ')
             : 'Formulario sin errores'
@@ -277,7 +296,7 @@ function RecipeForm({ stateDiets , obtainDiets }) {
             
       <div className='scores'>
         <div className='scoreDiv'>
-        <label htmlFor='scoreSp'>spoonacular Score</label>
+        <label htmlFor='scoreSp'>Score: </label>
           <input
           id="scoreSp"
           type="number"
@@ -289,7 +308,7 @@ function RecipeForm({ stateDiets , obtainDiets }) {
           />
         </div>
         <div className='scoreDiv'>
-        <label htmlFor='scoreHt'>Healthy Score </label>
+        <label htmlFor='scoreHt'>Healthy: </label>
           <input
           id="scoreHt"
           type="number"

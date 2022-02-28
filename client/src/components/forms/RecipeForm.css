@@ -7,6 +7,13 @@
   width: 100%;
   gap: 5px;
 }
+.validation .success {
+  text-decoration-color: limegreen;
+  color: limegreen;
+}
+.validation .danger {
+  text-decoration-color: rgb(205, 50, 50);
+}
 .TitleAndError {
   display: flex;
   justify-content: space-between;

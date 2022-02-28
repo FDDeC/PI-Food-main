@@ -64,14 +64,14 @@ function Recipes({ status, recipes }) {
         return (
             <div className='container'>
                 <div className='pagination'>
-                    {pages.length>1? <button onClick={()=>prevPage()}>Prev</button> : <></>}
+                    {pages.length > 1 ? <button disabled={ page===0 } onClick={()=>prevPage()}>Prev</button> : <></>}
                     {pages.length
                         ? pages.map((pag,i) =>
                             <button disabled={  page === i } className={ page === i? 'paginaActual' : ''} onClick={()=>loadPage(i)} key={i}>{ pag }</button>
                         )
-                        : <h4>No existen paginas</h4>
+                        : <></>
                     }  
-                    {pages.length > 1 ? <button onClick={() => nextPage()}>Next</button> : <></>}
+                    {pages.length > 1 ? <button disabled={ page===pages.length-1 } onClick={() => nextPage()}>Next</button> : <></>}
                     {recipes.length>0 && <h4> Total {recipes.length}</h4>}
                 </div>
                 

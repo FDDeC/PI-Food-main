@@ -26,7 +26,8 @@ function RecipeIcon({recipe}) {
                         )
                         : <h5>No dispone de dietas extras</h5>
                     }
-                </ul>    
+                </ul>
+                Score: { recipe.spoonacularScore }
                 </div>
             <Link className='detailLink' to={`../recipe/${recipe.id}`}>Detalles</Link>
             </div > 

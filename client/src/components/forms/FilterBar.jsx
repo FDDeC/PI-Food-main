@@ -66,8 +66,7 @@ function FilterBar({ applyFilter, status, result, setStatus, dietTypes, obtainDi
 
   useEffect(() => {
     let timeout = null;
-    if (!dietTypes.length) {
-      console.log('obtengo diets')
+    if (!dietTypes.length) {      
       obtainDiets()
     }
     

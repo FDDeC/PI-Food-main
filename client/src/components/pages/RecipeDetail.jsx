@@ -21,7 +21,6 @@ function mapStateToProps(state) { //el componente va a estar al tanto del estado
 
 function RecipeDetail({ filteredRecipes, getRecipeDetail, recipeDetail }) {
     
-    const [ recipe, setRecipe ] = useState({ id: null })
     const [ steps, setSteps ] = useState([]) 
     const [ step, setStep ] = useState(0)
     

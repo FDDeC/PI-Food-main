@@ -44,6 +44,31 @@ function filterByTitle(arr,name) {
     })
 }
 
+function getAllDietTypes() {
+    return new Promise(function (resolve, reject) {
+        try {
+            var response = []   
+            
+            dietsFromSpoon.map(async(value, index) => {
+                
+                const addDiet = await Diet.findOrCreate({
+                    where: { name: value }
+                })
+                response.push(addDiet[0].get({ plain: true }))
+                if (response.length === dietsFromSpoon.length) {
+                    resolve(response.sort((a, b) => {
+                        if (a.id > b.id) return 1;
+                        if (a.id < b.id) return -1;
+                    }))
+                }            
+            })         
+            
+        } catch (error) {
+            reject(response)
+        }        
+    })
+}
+
 //modifica arreglo de receta
 function sanitizeRecipe(recipeDb) {
     var data = recipeDb.get({ plain: true })
@@ -65,16 +90,8 @@ router.post('/recipe', async (req, res) => {
 
 router.get('/types', async (req, res) => {
     try {
-        let response = []
-        dietsFromSpoon.map(async (value,index) => {
-            const addDiet = await Diet.findOrCreate({
-                where: { name: value }
-            })
-            response.push(addDiet[0].get({ plain: true }))
-            if (index === dietsFromSpoon.length - 1) {
-                return res.status(200).json(response)
-            }            
-        });
+        const diets = await getAllDietTypes()        
+        return res.status(200).json(diets)
     } catch (error) {
         return res.status(401).json({ done: false, data: `get('/types' ${error}` })
     }      
@@ -108,10 +125,8 @@ router.get('/recipes', async (req, res) => {
                 }            
         }, { raw: true })
 
-        const result2 = await refactorizarArray(result, sanitizeRecipe)
-                
-        const recipes = await filterByTitle(result2,name)
-
+        const result2 = await refactorizarArray(result, sanitizeRecipe)                
+        const recipes = await filterByTitle(result2,name)        
         return res.status(200).json({ done:true, data:recipes })                        
                 
     } catch (error) {        
