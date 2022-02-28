@@ -6,7 +6,7 @@ var WanRecipes = []
 async function getWanRecipes() {
     try {        
         if (!WanRecipes.length) {                        
-            const consulta = await fetch(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY3}&addRecipeInformation=true&number=100`)
+            const consulta = await fetch(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&addRecipeInformation=true&number=100`)
             const result = await consulta.json()
             WanRecipes = result.results
             return result.results   
@@ -94,6 +94,11 @@ export function getRecipes(filter) {
 export function setFilteringStatus(value) {
     return function (dispatch) {        
         dispatch({ type: 'SET_FILTERING_STATUS', payload: value })
+    }
+}
+export function addNewRecipe(value) {
+    return function (dispatch) {        
+        dispatch({ type: 'ADD_NEW_RECIPE', payload: value })
     }
 }
 

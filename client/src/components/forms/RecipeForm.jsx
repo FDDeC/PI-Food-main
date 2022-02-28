@@ -138,6 +138,7 @@ function RecipeForm({ stateDiets , obtainDiets }) {
         spoonacularScore: 50.5,//puntuacion
         healthScore: 50.5,//nivel saludable
       })
+      return alert('Receta añadida correctamente!!')
     } else {
       return alert(`error en server: ${sendResult.data}`)
     }      
