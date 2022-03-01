@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { getRecipes, setFilteringStatus, getDiets, setOrder } from '../../actions'
+import { getRecipes, setFilteringStatus, getDiets, setOrder, setAlpha, setScore } from '../../actions'
 import { Link } from 'react-router-dom'
 import { connect } from "react-redux";
 import './FilterBar.css'
@@ -10,7 +10,9 @@ function mapDispatchToProps(dispatch) { //le doy al componente la capacidad de m
     applyFilter: obj => dispatch(getRecipes(obj)),// le envio el filtro al action creator
     setStatus: boolean => dispatch(setFilteringStatus(boolean)),//setea en "FILTRANDO" al componente 
     obtainDiets: () => dispatch(getDiets()),// para solicitar tipos de dietas
-    setOrder: obj => dispatch(setOrder(obj))
+    setOrder: obj => dispatch(setOrder(obj)),
+    setAlpha: obj => dispatch(setAlpha(obj)),
+    setScore: obj => dispatch(setScore(obj))    
   };
 }
 
@@ -18,7 +20,8 @@ function mapStateToProps(state) { //el componente va a estar al tanto del estado
   return {
     status: state.filtering,
     result: state.filterResult,
-    dietTypes: state.dietTypes
+    dietTypes: state.dietTypes,
+    wanRecipes: state.wanRecipes
   }
 }
 
@@ -32,7 +35,7 @@ function validate(input) {
   };
 
   
-function FilterBar({ applyFilter, status, result, setStatus, dietTypes, obtainDiets, setOrder }) {
+function FilterBar({ applyFilter, status, result, setStatus, dietTypes, obtainDiets, setAlpha, setScore, wanRecipes }) {
   
   const [filterGral, setFilter] = useState({
     title: '',
@@ -68,9 +71,9 @@ function FilterBar({ applyFilter, status, result, setStatus, dietTypes, obtainDi
     let timeout = null;
     if (!dietTypes.length) {      
       obtainDiets()
-    }
+    }   
     
-    if (typing || !result.length) {      
+    if (typing || !wanRecipes.length) {      
       
       timeout = setTimeout(() => {        
         setTyping(false)
@@ -87,10 +90,10 @@ function FilterBar({ applyFilter, status, result, setStatus, dietTypes, obtainDi
           applyFilter(filter)
         }
         
-      }, 1500);         
+      }, 1000);         
     }    
     return () => clearTimeout(timeout) 
-  }, [typing,alphaOrder,scoreOrder,setStatus,applyFilter,filterGral,diets,dietsCheck,errors,dietTypes,obtainDiets,result])
+  }, [typing,alphaOrder,scoreOrder,setStatus,applyFilter,filterGral,diets,dietsCheck,errors,dietTypes,obtainDiets,result,wanRecipes])
 
   const handleFilterChange = (e) => {
     setTyping(true)
@@ -121,21 +124,24 @@ function FilterBar({ applyFilter, status, result, setStatus, dietTypes, obtainDi
       setDiets(arr)
     }
   }
+
   function changeAlpha() {
     
     if (filterGral.title.length || result.length) { 
       const newAlpha = alphaOrder === 'az' ? 'za' : 'az'
       alphaOrder==='az' ? setAlphaOrder('za') : setAlphaOrder('az')
-      setOrder({orderAlpha:newAlpha, orderScore:scoreOrder})
+      //setOrder({orderAlpha:newAlpha, orderScore:scoreOrder})
+      setAlpha({orderAlpha:newAlpha})
     }
     
   }
   function changeScore() {
     
     if (filterGral.title.length || result.length) {
-      const newScore = scoreOrder === 'dsc' ? 'asc': 'dsc'
-      scoreOrder === 'dsc' ? setScoreOrder('asc') : setScoreOrder('dsc')       
-      setOrder({orderAlpha:alphaOrder, orderScore:newScore})
+      const newScore = scoreOrder === 'dsc' ? 'asc' : 'dsc'
+      scoreOrder === 'dsc' ? setScoreOrder('asc') : setScoreOrder('dsc')
+      //setOrder({orderAlpha:alphaOrder, orderScore:newScore})
+      setScore({orderScore: newScore})
     }
     
   }

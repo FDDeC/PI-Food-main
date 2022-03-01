@@ -1,4 +1,3 @@
-
 //import WR from './test'
 var WanRecipes = []
 //var WanRecipes = WR
@@ -30,6 +29,8 @@ async function getLanRecipes(title) {
         return []
     }    
 }
+
+
 
 async function getDietTypes() {
     try {
@@ -73,12 +74,24 @@ export function setOrder(order) {
     }
 }
 
+export function setAlpha(order) {
+    return async function (dispatch) {
+        dispatch({ type: 'ORDER_BY_ALPHA', payload: order })              
+    }
+}
+
+export function setScore(order) {
+    return async function (dispatch) {
+        dispatch({ type: 'ORDER_BY_SCORE', payload: order })              
+    }
+}
 
 export function getRecipes(filter) {
     
     return async function (dispatch) {
         try {
             const wanR = await getWanRecipes()
+            dispatch({type:'SET_WAN_RECIPES', payload:wanR})
             const lanR = await getLanRecipes(filter.title)            
             const allR = [...lanR,...wanR] //aca meto todo lo que me trae el wan y el lan, luego aplico filtro            
             dispatch({ type: 'SET_FILTERING_STATUS', payload: false })            

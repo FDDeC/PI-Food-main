@@ -35,8 +35,7 @@ function Recipes({ status, recipes }) {
         }            
         setPages(p)
         if(page>p.length) setPage(0)
-        setContent(recipes.slice(page*9,page*9+9))
-        
+        setContent(recipes.slice(page*9,page*9+9))        
         return () => { }
     }, [recipes, page])
     
@@ -80,7 +79,7 @@ function Recipes({ status, recipes }) {
                         ? content.map((recipe,i) => 
                             <RecipeIcon key={ i } recipe={ recipe }/>
                         )
-                        : <h3>No existen Recetas con ese filtro</h3>
+                        : <h3 hidden={ status }>No existen Recetas con ese filtro</h3>
                     }                    
                 </div>            
             </div>

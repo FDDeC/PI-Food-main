@@ -1,49 +1,69 @@
 const initialState = {
-    recipeAll: [],
+    wanRecipes: [],
     filterResult: [],
     recipeDetail: { id:null },
     filtering: false,    
     dietTypes: []
-  };
-
-function rootReducer(state = initialState, action) {
-
-    if (action.type === "GET_ALL_RECIPES") {
-        return {
-            ...state,
-            recipeAll: [action.payload]
-        }
+};
+  
+function orderByAlpha(recipes, filter) { 
+    
+    if (filter.orderAlpha === 'az') {//aplico orden A->Z
+        recipes.sort(function(a, b) {
+            if (a.title.toLowerCase() > b.title.toLowerCase()) return 1;
+            if (a.title.toLowerCase() < b.title.toLowerCase()) return -1;
+            return 0;
+        })
+    } else {
+        recipes.sort(function(a, b) {
+            if (a.title.toLowerCase() < b.title.toLowerCase()) return 1;
+            if (a.title.toLowerCase() > b.title.toLowerCase()) return -1;
+            return 0;
+        })
     }
+    return recipes
+}
 
-    if (action.type === "ORDER_RECIPES") {
-        
-        var orderedRecipes = [...state.filterResult]
-        if (action.payload.orderAlpha === 'az') {//aplico orden A->Z
-            orderedRecipes.sort(function(a, b) {
-                if (a.title.toLowerCase() > b.title.toLowerCase()) return 1;
-                if (a.title.toLowerCase() < b.title.toLowerCase()) return -1;
-                return 0;
-            })
-        } else {
-            orderedRecipes.sort(function(a, b) {
-                if (a.title.toLowerCase() < b.title.toLowerCase()) return 1;
-                if (a.title.toLowerCase() > b.title.toLowerCase()) return -1;
-                return 0;
-            })
-        } 
-        if (action.payload.orderScore === 'asc') {//aplico orden A->Z
-            orderedRecipes.sort(function (a, b) {
+function orderByScore(recipes, filter) {
+    if (filter.orderScore === 'asc') {//aplico orden A->Z
+            recipes.sort(function (a, b) {
                 if (a.spoonacularScore > b.spoonacularScore) return 1;
                 if (a.spoonacularScore < b.spoonacularScore) return -1;
                 return 0;
             })
         } else {
-            orderedRecipes.sort(function (a, b) {
+            recipes.sort(function (a, b) {
                 if (a.spoonacularScore < b.spoonacularScore) return 1;
                 if (a.spoonacularScore > b.spoonacularScore) return -1;
                 return 0;
             })
-        }    
+    }
+    return recipes
+}
+
+function rootReducer(state = initialState, action) {
+
+    if (action.type === "SET_WAN_RECIPES") {
+        return {
+            ...state,
+            wanRecipes: [action.payload]
+        }
+    }
+
+    if (action.type === "ORDER_BY_ALPHA") {
+        
+        const orderedRecipes = orderByAlpha([...state.filterResult],action.payload)
+        
+        return {
+            ...state,
+            filterResult: orderedRecipes            
+        }
+    }
+
+    if (action.type === "ORDER_BY_SCORE") {
+        
+        const orderedRecipes = orderByScore([...state.filterResult],action.payload)
+        
         return {
             ...state,
             filterResult: orderedRecipes            
@@ -51,7 +71,8 @@ function rootReducer(state = initialState, action) {
     }
 
 
-    if (action.type === "SET_RECIPES_AND_FILTER") {        
+    if (action.type === "SET_RECIPES_AND_FILTER") { 
+        
         if (action.payload.filter.title.length) {//aplico filtro de título
             action.payload.recipes = action.payload.recipes.filter(r => r.title.toLowerCase().includes(action.payload.filter.title.toLowerCase()))
         }
@@ -60,35 +81,10 @@ function rootReducer(state = initialState, action) {
                 action.payload.recipes = action.payload.recipes.filter(r => r.diets.includes(diet.toLowerCase()))    
             });            
         }
-        if (action.payload.filter.orderAlpha === 'az') {//aplico orden A->Z
-            action.payload.recipes.sort(function(a, b) {
-                if (a.title.toLowerCase() > b.title.toLowerCase()) return 1;
-                if (a.title.toLowerCase() < b.title.toLowerCase()) return -1;
-                return 0;
-            })
-        } else {
-            action.payload.recipes.sort(function(a, b) {
-                if (a.title.toLowerCase() < b.title.toLowerCase()) return 1;
-                if (a.title.toLowerCase() > b.title.toLowerCase()) return -1;
-                return 0;
-            })
-        } 
-        if (action.payload.filter.orderScore === 'asc') {//aplico orden A->Z
-            action.payload.recipes.sort(function (a, b) {
-                if (a.spoonacularScore > b.spoonacularScore) return 1;
-                if (a.spoonacularScore < b.spoonacularScore) return -1;
-                return 0;
-            })
-        } else {
-            action.payload.recipes.sort(function (a, b) {
-                if (a.spoonacularScore < b.spoonacularScore) return 1;
-                if (a.spoonacularScore > b.spoonacularScore) return -1;
-                return 0;
-            })
-        }    
+        const orderedRecipes = orderByAlpha(action.payload.recipes,action.payload.filter)           
         return {
-            ...state,
-            filterResult: action.payload.recipes            
+            ...state,            
+            filterResult: orderedRecipes            
         }
     }
 
