@@ -110,6 +110,7 @@ export function setFilteringStatus(value) {
     }
 }
 export function addNewRecipe(value) {
+    
     return function (dispatch) {        
         dispatch({ type: 'ADD_NEW_RECIPE', payload: value })
     }
@@ -120,6 +121,7 @@ export function setPage(value) {
         dispatch({ type: 'SET_PAGE_AND_LOAD_CONTENT', payload: value })
     }
 }
+
 
 export function getRecipeDetail(id) {    
     return async function (dispatch) {        

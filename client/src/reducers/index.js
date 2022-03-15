@@ -50,6 +50,13 @@ function rootReducer(state = initialState, action) {
         }
     }
 
+    if (action.type === "ADD_NEW_RECIPE") {        
+        return {
+            ...state,
+            filterResult: [...state.filterResult,action.payload]
+        }
+    }
+
     if (action.type === "ORDER_BY_ALPHA") {
         
         const orderedRecipes = orderByAlpha([...state.filterResult],action.payload)

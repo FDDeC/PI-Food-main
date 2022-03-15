@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from "react-redux";
-import { getDiets } from '../../actions'
+import { getDiets, addNewRecipe } from '../../actions'
 import './RecipeForm.css'
 
 // Nombre
@@ -12,6 +12,7 @@ import './RecipeForm.css'
 function mapDispatchToProps(dispatch) { //le doy al componente la capacidad de manejar el estado de redux
   return {
     obtainDiets: () => dispatch(getDiets()),// para solicitar tipos de dietas
+    addNewRecipe: obj => dispatch(addNewRecipe(obj))
   };
 }
 
@@ -41,7 +42,7 @@ async function sendRecipe(data) {
   
 }
 
-function RecipeForm({ stateDiets , obtainDiets }) {
+function RecipeForm({ stateDiets , obtainDiets, addNewRecipe }) {
 
   const [text, setText] = useState({
     title: '',//titulo
@@ -109,7 +110,8 @@ function RecipeForm({ stateDiets , obtainDiets }) {
         diets: diets
       }    
     const sendResult = await sendRecipe(newRecipe)    
-    if (sendResult.done && sendResult.done===true) {
+      if (sendResult.done && sendResult.done === true) {
+      addNewRecipe(sendResult.data)
       setStep({//pongo en 0 el step para proximo paso
       number: undefined,
       step: '',
