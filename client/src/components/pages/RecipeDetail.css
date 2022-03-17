@@ -4,9 +4,13 @@
   align-items: center;
   max-width: 850px;
   border: solid #414558 2px;
+  border-radius: 10px;
 }
 .recipeDetail-img {
   padding: 10px;
+}
+.recipeImg {
+  border-radius: 10px;
 }
 .recipeDetail-details {
   padding: 10px;

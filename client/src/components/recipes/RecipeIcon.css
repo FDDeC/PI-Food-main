@@ -3,10 +3,12 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  flex: 1 1 29%; /* explanation below */
+  flex: 1 1 25%;
   height: 250px;
-  max-width: 405px;
+  max-width: 280px;
   border: solid #414558 2px;
+  margin-bottom: 10px;
+  border-radius: 10px;
 }
 .recipeIcon-title {
   margin-top: 15px;

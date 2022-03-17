@@ -68,7 +68,7 @@ function RecipeDetail({ filteredRecipes, getRecipeDetail, recipeDetail }) {
                     rgba(255, 255, 255, 0.75),
                     rgba(255, 255, 255, 0.75)
                     )
-                    , url(${(recipeDetail.image && recipeDetail.image) || img})`,
+                    , url(${(recipeDetail.image && recipeDetail.image) || img})`,                    
                 backgroundRepeat: `no-repeat`,
                 backgroundSize: `cover`
                     }}>
